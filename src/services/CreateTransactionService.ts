@@ -1,11 +1,10 @@
-// import AppError from '../errors/AppError';
-
 import { getCustomRepository, getRepository } from 'typeorm';
 
 import TransactionRepository from '../repositories/TransactionsRepository';
 
 import Transaction from '../models/Transaction';
 import Category from '../models/Category';
+import AppError from '../errors/AppError';
 
 interface RequestParms {
   title: string;
@@ -25,6 +24,12 @@ class CreateTransactionService {
 
     const categoryRepository = getRepository(Category);
 
+    const { total } = await transactionRepository.getBalance();
+
+    if (type === 'outcome' && total < value) {
+      throw new AppError('You do not have enough balance');
+    }
+
     let nameTransactionCategory = await categoryRepository.findOne({
       where: {
         title: category,
@@ -37,7 +42,6 @@ class CreateTransactionService {
       });
       await categoryRepository.save(nameTransactionCategory);
     }
-
     const transaction = transactionRepository.create({
       title,
       value,

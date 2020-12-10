@@ -18,7 +18,7 @@ export default class AddCategoryIdToTrasactions1607369667910
       }),
     );
     await queryRunner.createForeignKey(
-      'transactions',
+      'transactionss',
       new TableForeignKey({
         columnNames: ['category_id'],
         referencedColumnNames: ['id'],
